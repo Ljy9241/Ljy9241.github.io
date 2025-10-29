@@ -130,6 +130,7 @@
         const totalWindows = 30;
         // 创建提示窗口 - 简单随机分布
         // 创建提示窗口
+        // 创建提示窗口 - 简单随机分布
         function createTipWindow() {
             if (windowCount >= totalWindows) return;
             
@@ -137,33 +138,27 @@
             const randomTip = tips[Math.floor(Math.random() * tips.length)];
             const randomColor = colors[Math.floor(Math.random() * colors.length)];
             
-            // 创建窗口元素
             const tipWindow = document.createElement('div');
             tipWindow.className = 'tip-window';
             tipWindow.style.background = randomColor;
             
-            // 改进的位置计算 - 均匀分布
-            const gridCols = 6; // 水平分4列
-            const gridRows = 8; // 垂直分8行
+            // 改进的随机分布 - 避免堆叠
+            const section = windowCount % 6; // 将屏幕分为6个区域
+            const sectionWidth = window.innerWidth / 3;
+            const sectionHeight = window.innerHeight / 2;
             
-            const colIndex = windowCount % gridCols;
-            const rowIndex = Math.floor(windowCount / gridCols) % gridRows;
+            const col = section % 3;
+            const row = Math.floor(section / 3);
             
-            const cellWidth = (window.innerWidth - 300) / gridCols;
-            const cellHeight = (window.innerHeight - 150) / gridRows;
+            const baseX = col * sectionWidth + 20;
+            const baseY = row * sectionHeight + 20;
             
-            // 在网格单元内随机位置
-            const randomX = colIndex * cellWidth + Math.random() * (cellWidth - 250);
-            const randomY = rowIndex * cellHeight + Math.random() * (cellHeight - 100);
+            const randomX = baseX + Math.random() * (sectionWidth - 250);
+            const randomY = baseY + Math.random() * (sectionHeight - 100);
             
-            // 确保不超出屏幕边界
-            const finalX = Math.max(10, Math.min(randomX, window.innerWidth - 280));
-            const finalY = Math.max(10, Math.min(randomY, window.innerHeight - 150));
+            tipWindow.style.left = `${randomX}px`;
+            tipWindow.style.top = `${randomY}px`;
             
-            tipWindow.style.left = `${finalX}px`;
-            tipWindow.style.top = `${finalY}px`;
-            
-            // 窗口内容
             tipWindow.innerHTML = `
                 <button class="close-btn" onclick="closeWindow(this)">×</button>
                 <div class="tip-content">
@@ -171,13 +166,10 @@
                 </div>
             `;
             
-            // 添加拖拽功能
             makeDraggable(tipWindow);
-            
             document.body.appendChild(tipWindow);
             windowCount++;
             
-            // 自动关闭定时器
             setTimeout(() => {
                 if (tipWindow.parentNode) {
                     closeWindow(tipWindow.querySelector('.close-btn'));
