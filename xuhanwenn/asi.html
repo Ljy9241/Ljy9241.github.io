@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>西瓜 to 阿肆</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', 'Microsoft YaHei', sans-serif;
+            background:#f0fff0;  /* 改为白色背景 */
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+        .tip-window {
+            position: absolute;
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            min-width: 250px;
+            max-width: 300px;
+            cursor: move;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            animation: fadeInScale 0.5s ease-out;
+            z-index: 1000;
+            cursor: move; /* 明确显示可拖动 */
+            user-select: none; /* 防止文字被选中 */
+            -webkit-user-select: none; /* 兼容Safari */
+        }
+        
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.8) translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+        
+        .tip-window:hover {
+            transform: scale(1.05);
+            border-color: #667eea;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 8px;
+            right: 10px;
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .close-btn:hover {
+            background: #ff5252;
+            transform: scale(1.1);
+        }
+        
+        .tip-content {
+            font-size: 16px;
+            line-height: 1.4;
+            color: #333;
+            text-align: center;
+            font-weight: 500;
+            user-select: none; /* 防止文字被选中 */
+            -webkit-user-select: none;
+        }
+        
+        .name {
+
+        }
+
+        /* 移动端优化 */
+        @media (max-width: 768px) {
+            .tip-window {
+                min-width: 150px;
+                max-width: 350px;
+                padding: 14px;
+            }
+            
+            .tip-content {
+                font-size: 16px;
+            }
+            
+            .close-btn {
+                width: 14px;
+                height: 14px;
+                font-size: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <script>
+        const names = ['阿肆', '小猫', ' '];
+        const tips = [
+            '多喝热水', '注意保暖', '保持好心情', '早点休息', '别太累了', '记得吃早餐',
+             '一切顺利', '天天开心', '少熬夜哦', '记得想我','我想你啦', 
+            '有我在呢', '早点睡呀','我想你啦',  '小心着凉', '梦想成真', '我想你啦',  '晚安，好梦',
+            '出门记得带伞', '记得吃水果', '好好爱自己呀', '别急，慢慢来', '顺顺利利',
+            '对自己好一点', '烦恼消失', '要开心哦', '开心最重要', '天冷加衣', '记得微笑',
+            '你很重要', '我们都在', '我想你啦', '我想你啦',  '愿你有个好心情', '愿你被温柔以待',
+            '我一直都在','在干嘛呢','摸摸头','抱抱你','想你想你','万事不用愁',
+            '好喜欢你',
+            '有你在很安心',
+            '今天也很想你',
+            '抱抱抱抱','摸摸摸摸',
+            '超级想你',
+
+        ];
+
+        const colors = [
+            '#FFB6C1', '#ADD8E6', '#90EE90', '#FFFFE0', 
+            '#FFA07A', '#DDA0DD', '#F0E68C', '#87CEFA',
+            '#FFDAB9', '#E0FFFF', '#D8BFD8', '#F5DEB3',
+                // 新增暖色调（低饱和、柔和）
+            '#FFD9A8', // 暖橙黄
+            '#FBE3C9', // 浅米黄
+            '#FFC19E', // 桃红橘
+            '#FFAD86', // 珊瑚橘
+            '#FACBA8', // 蜜桃粉
+            '#FFBC97', // 淡橘色
+            '#FFDBC9', // 轻柔杏色
+            '#FFCCA4', // 暖米白
+            '#FBE2C3', // 米白色
+            '#FCD5AE', // 淡金黄
+            '#FDB8A1', // 深珊瑚粉
+            '#FAC748', // 明亮黄
+            '#FBE5B3', // 淡奶油黄
+            '#FED85D', // 金盏花黄
+            '#FFD7BA', // 蜜糖色
+            '#FF9F9B', // 橘红
+            '#FFC080', // 落日橙
+            '#FFCCBC', // 沙色
+            '#FFECB3', // 香槟金
+            '#FFE0AA'  // 温暖的黄
+        ];
+
+        let windowCount = 0;
+        const totalWindows = 100;
+
+        // 创建提示窗口
+        function createTipWindow() {
+            if (windowCount >= totalWindows) return;
+            
+            const randomName = names[Math.floor(Math.random() * names.length)];
+            const randomTip = tips[Math.floor(Math.random() * tips.length)];
+            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+            
+            // 创建窗口元素
+            const tipWindow = document.createElement('div');
+            tipWindow.className = 'tip-window';
+            tipWindow.style.background = randomColor;
+            
+            // 随机位置
+            const maxX = window.innerWidth - 130;
+            const maxY = window.innerHeight - 100;
+            const randomX = Math.max(10, Math.floor(Math.random() * maxX));
+            const randomY = Math.max(10, Math.floor(Math.random() * maxY));
+            
+            tipWindow.style.left = `${randomX}px`;
+            tipWindow.style.top = `${randomY}px`;
+            
+            // 窗口内容 - 名字和话语在同一行
+            tipWindow.innerHTML = `
+                <div class="tip-content">
+                    <span class="name">${randomName}</span>${randomTip}
+                </div>
+            `;
+            
+            // 添加拖拽功能
+            makeDraggable(tipWindow);
+            
+            document.body.appendChild(tipWindow);
+            windowCount++;
+            
+            // 自动关闭定时器
+            setTimeout(() => {
+                if (tipWindow.parentNode) {
+                    closeWindow(tipWindow.querySelector('.close-btn'));
+                }
+            }, 40000);
+        }
+
+        // 关闭窗口
+        function closeWindow(button) {
+            const window = button.closest('.tip-window');
+            window.style.animation = 'fadeInScale 0.5s ease-out reverse';
+            setTimeout(() => {
+                window.remove();
+                windowCount--;
+                // 关闭后创建新窗口保持数量
+                setTimeout(() => createTipWindow(), 500);
+            }, 500);
+        }
+
+        // 批量创建窗口
+        function createMultipleWindows(count) {
+            const delay = 150; // 更短的间隔让窗口快速弹出
+            for (let i = 0; i < count; i++) {
+                setTimeout(() => {
+                    createTipWindow();
+                }, i * delay);
+            }
+        }
+
+        // 修复后的拖拽功能
+        function makeDraggable(element) {
+            let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+            
+            element.onmousedown = dragMouseDown;
+            element.ontouchstart = dragTouchStart;
+
+            function dragMouseDown(e) {
+                e.preventDefault();
+                // 获取鼠标位置
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                
+                // 获取元素当前位置
+                const rect = element.getBoundingClientRect();
+                pos1 = pos3 - rect.left;
+                pos2 = pos4 - rect.top;
+                
+                document.onmouseup = closeDragElement;
+                document.onmousemove = elementDrag;
+                element.style.zIndex = '1001';
+                element.style.cursor = 'grabbing';
+            }
+
+            function dragTouchStart(e) {
+                const touch = e.touches[0];
+                pos3 = touch.clientX;
+                pos4 = touch.clientY;
+                
+                const rect = element.getBoundingClientRect();
+                pos1 = pos3 - rect.left;
+                pos2 = pos4 - rect.top;
+                
+                document.ontouchend = closeDragElement;
+                document.ontouchmove = elementTouchDrag;
+                element.style.zIndex = '1001';
+            }
+
+            function elementDrag(e) {
+                e.preventDefault();
+                // 计算新位置
+                const newX = e.clientX - pos1;
+                const newY = e.clientY - pos2;
+                
+                // 设置新位置，限制在屏幕范围内
+                const maxX = window.innerWidth - element.offsetWidth;
+                const maxY = window.innerHeight - element.offsetHeight;
+                
+                element.style.left = Math.max(0, Math.min(newX, maxX)) + 'px';
+                element.style.top = Math.max(0, Math.min(newY, maxY)) + 'px';
+            }
+
+            function elementTouchDrag(e) {
+                const touch = e.touches[0];
+                const newX = touch.clientX - pos1;
+                const newY = touch.clientY - pos2;
+                
+                const maxX = window.innerWidth - element.offsetWidth;
+                const maxY = window.innerHeight - element.offsetHeight;
+                
+                element.style.left = Math.max(0, Math.min(newX, maxX)) + 'px';
+                element.style.top = Math.max(0, Math.min(newY, maxY)) + 'px';
+            }
+
+            function closeDragElement() {
+                document.onmouseup = null;
+                document.onmousemove = null;
+                document.ontouchend = null;
+                document.ontouchmove = null;
+                element.style.zIndex = '1000';
+                element.style.cursor = 'move';
+            }
+        }
+
+        // 页面加载时自动创建30个窗口
+        window.onload = function() {
+            // 立即创建30个窗口
+            createMultipleWindows(totalWindows);
+        };
+
+        // 点击页面空白处也可以创建新窗口
+        document.body.addEventListener('click', function(e) {
+            if (e.target === document.body && windowCount < totalWindows) {
+                createTipWindow();
+            }
+        });
+    </script>
+</body>
+</html>
