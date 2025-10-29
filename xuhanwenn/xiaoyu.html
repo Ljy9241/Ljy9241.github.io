@@ -127,10 +127,9 @@
         ];
 
         let windowCount = 0;
-        const totalWindows = 30;
-        // 创建提示窗口 - 简单随机分布
+        const totalWindows = 50;
+
         // 创建提示窗口
-        // 创建提示窗口 - 简单随机分布
         function createTipWindow() {
             if (windowCount >= totalWindows) return;
             
@@ -138,87 +137,41 @@
             const randomTip = tips[Math.floor(Math.random() * tips.length)];
             const randomColor = colors[Math.floor(Math.random() * colors.length)];
             
+            // 创建窗口元素
             const tipWindow = document.createElement('div');
             tipWindow.className = 'tip-window';
             tipWindow.style.background = randomColor;
             
-            // 改进的随机分布 - 避免堆叠
-            const section = windowCount % 6; // 将屏幕分为6个区域
-            const sectionWidth = window.innerWidth / 3;
-            const sectionHeight = window.innerHeight / 2;
-            
-            const col = section % 3;
-            const row = Math.floor(section / 3);
-            
-            const baseX = col * sectionWidth + 20;
-            const baseY = row * sectionHeight + 20;
-            
-            const randomX = baseX + Math.random() * (sectionWidth - 250);
-            const randomY = baseY + Math.random() * (sectionHeight - 100);
+            // 随机位置
+            const maxX = window.innerWidth - 280;
+            const maxY = window.innerHeight - 150;
+            const randomX = Math.max(10, Math.floor(Math.random() * maxX));
+            const randomY = Math.max(10, Math.floor(Math.random() * maxY));
             
             tipWindow.style.left = `${randomX}px`;
             tipWindow.style.top = `${randomY}px`;
             
+            // 窗口内容 - 名字和话语在同一行
             tipWindow.innerHTML = `
                 <button class="close-btn" onclick="closeWindow(this)">×</button>
                 <div class="tip-content">
-                    <span>${randomName}：${randomTip}</span>
+                    <span class="name">${randomName} </span>${randomTip}
                 </div>
             `;
             
+            // 添加拖拽功能
             makeDraggable(tipWindow);
+            
             document.body.appendChild(tipWindow);
             windowCount++;
             
+            // 自动关闭定时器
             setTimeout(() => {
                 if (tipWindow.parentNode) {
                     closeWindow(tipWindow.querySelector('.close-btn'));
                 }
             }, 40000);
         }
-        // // 创建提示窗口
-        // function createTipWindow() {
-        //     if (windowCount >= totalWindows) return;
-            
-        //     const randomName = names[Math.floor(Math.random() * names.length)];
-        //     const randomTip = tips[Math.floor(Math.random() * tips.length)];
-        //     const randomColor = colors[Math.floor(Math.random() * colors.length)];
-            
-        //     // 创建窗口元素
-        //     const tipWindow = document.createElement('div');
-        //     tipWindow.className = 'tip-window';
-        //     tipWindow.style.background = randomColor;
-            
-        //     // 随机位置
-        //     const maxX = window.innerWidth - 280;
-        //     const maxY = window.innerHeight - 150;
-        //     const randomX = Math.max(10, Math.floor(Math.random() * maxX));
-        //     const randomY = Math.max(10, Math.floor(Math.random() * maxY));
-            
-        //     tipWindow.style.left = `${randomX}px`;
-        //     tipWindow.style.top = `${randomY}px`;
-            
-        //     // 窗口内容 - 名字和话语在同一行
-        //     tipWindow.innerHTML = `
-        //         <button class="close-btn" onclick="closeWindow(this)">×</button>
-        //         <div class="tip-content">
-        //             <span class="name">${randomName} </span>${randomTip}
-        //         </div>
-        //     `;
-            
-        //     // 添加拖拽功能
-        //     makeDraggable(tipWindow);
-            
-        //     document.body.appendChild(tipWindow);
-        //     windowCount++;
-            
-        //     // 自动关闭定时器
-        //     setTimeout(() => {
-        //         if (tipWindow.parentNode) {
-        //             closeWindow(tipWindow.querySelector('.close-btn'));
-        //         }
-        //     }, 40000);
-        // }
 
         // 关闭窗口
         function closeWindow(button) {
