@@ -143,8 +143,8 @@
             tipWindow.style.background = randomColor;
             
             // 随机位置
-            const maxX = window.innerWidth - 280;
-            const maxY = window.innerHeight - 150;
+            const maxX = window.innerWidth - 250;
+            const maxY = window.innerHeight - 120;
             const randomX = Math.max(10, Math.floor(Math.random() * maxX));
             const randomY = Math.max(10, Math.floor(Math.random() * maxY));
             
@@ -195,7 +195,7 @@
             }
         }
 
-        // 拖拽功能
+        // 修复后的拖拽功能
         function makeDraggable(element) {
             let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
             
@@ -204,17 +204,30 @@
 
             function dragMouseDown(e) {
                 e.preventDefault();
+                // 获取鼠标位置
                 pos3 = e.clientX;
                 pos4 = e.clientY;
+                
+                // 获取元素当前位置
+                const rect = element.getBoundingClientRect();
+                pos1 = pos3 - rect.left;
+                pos2 = pos4 - rect.top;
+                
                 document.onmouseup = closeDragElement;
                 document.onmousemove = elementDrag;
                 element.style.zIndex = '1001';
+                element.style.cursor = 'grabbing';
             }
 
             function dragTouchStart(e) {
                 const touch = e.touches[0];
                 pos3 = touch.clientX;
                 pos4 = touch.clientY;
+                
+                const rect = element.getBoundingClientRect();
+                pos1 = pos3 - rect.left;
+                pos2 = pos4 - rect.top;
+                
                 document.ontouchend = closeDragElement;
                 document.ontouchmove = elementTouchDrag;
                 element.style.zIndex = '1001';
@@ -222,22 +235,28 @@
 
             function elementDrag(e) {
                 e.preventDefault();
-                pos1 = pos3 - e.clientX;
-                pos2 = pos4 - e.clientY;
-                pos3 = e.clientX;
-                pos4 = e.clientY;
-                element.style.top = (element.offsetTop - pos2) + "px";
-                element.style.left = (element.offsetLeft - pos1) + "px";
+                // 计算新位置
+                const newX = e.clientX - pos1;
+                const newY = e.clientY - pos2;
+                
+                // 设置新位置，限制在屏幕范围内
+                const maxX = window.innerWidth - element.offsetWidth;
+                const maxY = window.innerHeight - element.offsetHeight;
+                
+                element.style.left = Math.max(0, Math.min(newX, maxX)) + 'px';
+                element.style.top = Math.max(0, Math.min(newY, maxY)) + 'px';
             }
 
             function elementTouchDrag(e) {
                 const touch = e.touches[0];
-                pos1 = pos3 - touch.clientX;
-                pos2 = pos4 - touch.clientY;
-                pos3 = touch.clientX;
-                pos4 = touch.clientY;
-                element.style.top = (element.offsetTop - pos2) + "px";
-                element.style.left = (element.offsetLeft - pos1) + "px";
+                const newX = touch.clientX - pos1;
+                const newY = touch.clientY - pos2;
+                
+                const maxX = window.innerWidth - element.offsetWidth;
+                const maxY = window.innerHeight - element.offsetHeight;
+                
+                element.style.left = Math.max(0, Math.min(newX, maxX)) + 'px';
+                element.style.top = Math.max(0, Math.min(newY, maxY)) + 'px';
             }
 
             function closeDragElement() {
@@ -246,6 +265,7 @@
                 document.ontouchend = null;
                 document.ontouchmove = null;
                 element.style.zIndex = '1000';
+                element.style.cursor = 'move';
             }
         }
 
