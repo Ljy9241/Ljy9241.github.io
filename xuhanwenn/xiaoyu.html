@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>暖心提示</title>
+    <title>西瓜 to 小雨</title>
     <style>
         * {
             margin: 0;
@@ -109,7 +109,7 @@
 <body>
 
     <script>
-        const names = ['小雨', ' '];
+        const names = ['', ' '];
         const tips = [
             '多喝热水', '注意保暖', '保持好心情', '早点休息', '别太累了', '记得吃早餐',
              '一切顺利', '天天开心', '少熬夜哦', '记得想我','我想你啦', 
@@ -128,7 +128,7 @@
 
         let windowCount = 0;
         const totalWindows = 30;
-
+        // 创建提示窗口 - 简单随机分布
         // 创建提示窗口
         function createTipWindow() {
             if (windowCount >= totalWindows) return;
@@ -142,20 +142,32 @@
             tipWindow.className = 'tip-window';
             tipWindow.style.background = randomColor;
             
-            // 随机位置
-            const maxX = window.innerWidth - 280;
-            const maxY = window.innerHeight - 150;
-            const randomX = Math.max(10, Math.floor(Math.random() * maxX));
-            const randomY = Math.max(10, Math.floor(Math.random() * maxY));
+            // 改进的位置计算 - 均匀分布
+            const gridCols = 6; // 水平分4列
+            const gridRows = 8; // 垂直分8行
             
-            tipWindow.style.left = `${randomX}px`;
-            tipWindow.style.top = `${randomY}px`;
+            const colIndex = windowCount % gridCols;
+            const rowIndex = Math.floor(windowCount / gridCols) % gridRows;
             
-            // 窗口内容 - 名字和话语在同一行
+            const cellWidth = (window.innerWidth - 300) / gridCols;
+            const cellHeight = (window.innerHeight - 150) / gridRows;
+            
+            // 在网格单元内随机位置
+            const randomX = colIndex * cellWidth + Math.random() * (cellWidth - 250);
+            const randomY = rowIndex * cellHeight + Math.random() * (cellHeight - 100);
+            
+            // 确保不超出屏幕边界
+            const finalX = Math.max(10, Math.min(randomX, window.innerWidth - 280));
+            const finalY = Math.max(10, Math.min(randomY, window.innerHeight - 150));
+            
+            tipWindow.style.left = `${finalX}px`;
+            tipWindow.style.top = `${finalY}px`;
+            
+            // 窗口内容
             tipWindow.innerHTML = `
                 <button class="close-btn" onclick="closeWindow(this)">×</button>
                 <div class="tip-content">
-                    <span class="name">${randomName} </span>${randomTip}
+                    <span>${randomName}：${randomTip}</span>
                 </div>
             `;
             
@@ -172,6 +184,49 @@
                 }
             }, 40000);
         }
+        // // 创建提示窗口
+        // function createTipWindow() {
+        //     if (windowCount >= totalWindows) return;
+            
+        //     const randomName = names[Math.floor(Math.random() * names.length)];
+        //     const randomTip = tips[Math.floor(Math.random() * tips.length)];
+        //     const randomColor = colors[Math.floor(Math.random() * colors.length)];
+            
+        //     // 创建窗口元素
+        //     const tipWindow = document.createElement('div');
+        //     tipWindow.className = 'tip-window';
+        //     tipWindow.style.background = randomColor;
+            
+        //     // 随机位置
+        //     const maxX = window.innerWidth - 280;
+        //     const maxY = window.innerHeight - 150;
+        //     const randomX = Math.max(10, Math.floor(Math.random() * maxX));
+        //     const randomY = Math.max(10, Math.floor(Math.random() * maxY));
+            
+        //     tipWindow.style.left = `${randomX}px`;
+        //     tipWindow.style.top = `${randomY}px`;
+            
+        //     // 窗口内容 - 名字和话语在同一行
+        //     tipWindow.innerHTML = `
+        //         <button class="close-btn" onclick="closeWindow(this)">×</button>
+        //         <div class="tip-content">
+        //             <span class="name">${randomName} </span>${randomTip}
+        //         </div>
+        //     `;
+            
+        //     // 添加拖拽功能
+        //     makeDraggable(tipWindow);
+            
+        //     document.body.appendChild(tipWindow);
+        //     windowCount++;
+            
+        //     // 自动关闭定时器
+        //     setTimeout(() => {
+        //         if (tipWindow.parentNode) {
+        //             closeWindow(tipWindow.querySelector('.close-btn'));
+        //         }
+        //     }, 40000);
+        // }
 
         // 关闭窗口
         function closeWindow(button) {
