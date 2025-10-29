@@ -31,6 +31,9 @@
             border: 2px solid transparent;
             animation: fadeInScale 0.5s ease-out;
             z-index: 1000;
+            cursor: move; /* 明确显示可拖动 */
+            user-select: none; /* 防止文字被选中 */
+            -webkit-user-select: none; /* 兼容Safari */
         }
         
         @keyframes fadeInScale {
@@ -80,6 +83,8 @@
             color: #333;
             text-align: center;
             font-weight: 500;
+            user-select: none; /* 防止文字被选中 */
+            -webkit-user-select: none;
         }
         
         .name {
