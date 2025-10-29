@@ -148,8 +148,8 @@
             tipWindow.style.background = randomColor;
             
             // 随机位置
-            const maxX = window.innerWidth - 250;
-            const maxY = window.innerHeight - 120;
+            const maxX = window.innerWidth - 220;
+            const maxY = window.innerHeight - 100;
             const randomX = Math.max(10, Math.floor(Math.random() * maxX));
             const randomY = Math.max(10, Math.floor(Math.random() * maxY));
             
@@ -160,7 +160,7 @@
             tipWindow.innerHTML = `
                 <button class="close-btn" onclick="closeWindow(this)">×</button>
                 <div class="tip-content">
-                    <span class="name">${randomName} </span>${randomTip}
+                    <span class="name">${randomName}</span>${randomTip}
                 </div>
             `;
             
