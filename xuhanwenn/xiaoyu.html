@@ -94,8 +94,8 @@
         /* 移动端优化 */
         @media (max-width: 768px) {
             .tip-window {
-                min-width: 120px;
-                max-width: 280px;
+                min-width: 150px;
+                max-width: 350px;
                 padding: 10px;
             }
             
@@ -148,7 +148,7 @@
             tipWindow.style.background = randomColor;
             
             // 随机位置
-            const maxX = window.innerWidth - 100;
+            const maxX = window.innerWidth - 130;
             const maxY = window.innerHeight - 100;
             const randomX = Math.max(10, Math.floor(Math.random() * maxX));
             const randomY = Math.max(10, Math.floor(Math.random() * maxY));
